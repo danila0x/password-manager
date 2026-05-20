@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 type PasswordManager struct {
-	passwords     map[string]Password `json:"password"`
+	passwords     map[string]Password `json:"passwords"`
 	masterKey     []byte              `json:"-"`
 	filePath      string              `json:"-"`
 	isInitialized bool                `json:"-"`
