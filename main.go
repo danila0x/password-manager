@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -23,5 +24,6 @@ func NewPassword(name, value, category string) Password {
 }
 
 func main() {
-
+	pm := NewPasswordManager("password.dat")
+	fmt.Println(pm)
 }
