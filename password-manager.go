@@ -3,10 +3,10 @@ package main
 import "fmt"
 
 type PasswordManager struct {
-	passwords     map[string]Password
-	masterKey     []byte
-	filePath      string
-	isInitialized bool `json:"-"`
+	passwords     map[string]Password `json:"password"`
+	masterKey     []byte              `json:"-"`
+	filePath      string              `json:"-"`
+	isInitialized bool                `json:"-"`
 }
 
 func NewPasswordManager(filePath string) *PasswordManager {
