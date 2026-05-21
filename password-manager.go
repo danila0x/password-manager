@@ -21,3 +21,14 @@ func NewPasswordManager(filePath string) *PasswordManager {
 func (pm *PasswordManager) String() string {
 	return fmt.Sprintf("Initialized: %v\nFile path: %s\nPasswords count: %d", pm.isInitialized, pm.filePath, len(pm.passwords))
 }
+
+func (pm *PasswordManager) SetMasterPassword(masterPassword string) error {
+	if len(masterPassword) < 8 {
+		return fmt.Errorf("password is too weak")
+	}
+	key := make([]byte, 32)
+	copy(key, []byte(masterPassword))
+	pm.masterKey = key
+	pm.isInitialized = true
+	return nil
+}
