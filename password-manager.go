@@ -45,3 +45,15 @@ func (pm *PasswordManager) SavePassword(name, value, category string) error {
 	pm.passwords[name] = pass
 	return nil
 }
+
+func (pm *PasswordManager) GetPassword(name string) (Password, error) {
+	if !pm.isInitialized {
+		return Password{}, fmt.Errorf("password manager not initialized")
+	}
+	pass, ok := pm.passwords[name]
+	if !ok {
+		return Password{}, fmt.Errorf("password not found")
+	} else {
+		return pass, nil
+	}
+}
