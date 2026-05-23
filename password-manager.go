@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"crypto/rand"
+	"fmt"
+)
 
 type PasswordManager struct {
 	passwords     map[string]Password `json:"passwords"`
@@ -64,4 +67,26 @@ func (pm *PasswordManager) ListPasswords() []Password {
 		passwordList = append(passwordList, value)
 	}
 	return passwordList
+}
+
+func (pm *PasswordManager) GeneratePassword(length int) (string, error) {
+	if length < 8 {
+		return "", fmt.Errorf("Error for short password: password is too weak")
+	}
+	capitalCase := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	lowercase := "abcdefghijklmnopqrstuvwxyz"
+	digits := "0123456789"
+	special := "!@#$%^&*"
+	allCharacters := capitalCase + lowercase + digits + special
+	key := make([]byte, length)
+	n, err := rand.Read(key)
+	if err != nil || n != length {
+		return "", fmt.Errorf("Error for short password: password is too weak")
+	}
+	res := make([]byte, 0, length)
+	for _, b := range key {
+		index := int(b) % len(allCharacters)
+		res = append(res, allCharacters[index])
+	}
+	return string(res), nil
 }
