@@ -57,3 +57,11 @@ func (pm *PasswordManager) GetPassword(name string) (Password, error) {
 		return pass, nil
 	}
 }
+
+func (pm *PasswordManager) ListPasswords() []Password {
+	passwordList := make([]Password, 0, len(pm.passwords))
+	for _, value := range pm.passwords {
+		passwordList = append(passwordList, value)
+	}
+	return passwordList
+}
