@@ -1,8 +1,13 @@
 package main
 
 import (
+	"crypto/aes"
+	"crypto/cipher"
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
+	"io"
+	"os"
 )
 
 type PasswordManager struct {
@@ -89,4 +94,48 @@ func (pm *PasswordManager) GeneratePassword(length int) (string, error) {
 		res = append(res, allCharacters[index])
 	}
 	return string(res), nil
+}
+
+func (pm *PasswordManager) SaveToFile() error {
+	if !pm.isInitialized {
+		return fmt.Errorf("manager is not initialized")
+	}
+	data, err := json.Marshal(pm.passwords)
+	if err != nil {
+		return fmt.Errorf("json error")
+	}
+	block, err := aes.NewCipher(pm.masterKey)
+	if err != nil {
+		return fmt.Errorf("failed to create AES cipher: %w", err)
+	}
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return fmt.Errorf("failed to create GCM: %w", err)
+	}
+	nonce := make([]byte, gcm.NonceSize())
+	_, err = io.ReadFull(rand.Reader, nonce)
+	if err != nil {
+		return fmt.Errorf("ReadFull error: %w", err)
+	}
+	ciphertext := gcm.Seal(nil, nonce, data, nil)
+	file, err := os.Create(pm.filePath)
+	if err != nil {
+		return err
+	}
+	defer file.Close()
+	n, err := file.Write(nonce)
+	if err != nil {
+		return fmt.Errorf("failed to write nonce: %w", err)
+	}
+	if n != len(nonce) {
+		return fmt.Errorf("short write: wrote %d of %d nonce bytes", n, len(nonce))
+	}
+	n, err = file.Write(ciphertext)
+	if err != nil {
+		return fmt.Errorf("failed to write ciphertext: %w", err)
+	}
+	if n != len(ciphertext) {
+		return fmt.Errorf("short write: wrote %d of %d ciphertext bytes", n, len(ciphertext))
+	}
+	return nil
 }
