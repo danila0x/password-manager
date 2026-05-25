@@ -139,3 +139,43 @@ func (pm *PasswordManager) SaveToFile() error {
 	}
 	return nil
 }
+
+func (pm *PasswordManager) LoadFromFile() error {
+	if !pm.isInitialized {
+		return fmt.Errorf("manager is not initialized")
+	}
+	file, err := os.Open(pm.filePath)
+	if err != nil {
+		return fmt.Errorf("failed to open file: %w", err)
+	}
+	defer file.Close()
+
+	block, err := aes.NewCipher(pm.masterKey)
+	if err != nil {
+		return fmt.Errorf("failed to create AES cipher: %w", err)
+	}
+	gcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return fmt.Errorf("failed to create GCM: %w", err)
+	}
+	nonce := make([]byte, gcm.NonceSize())
+	_, err = io.ReadFull(file, nonce)
+	if err != nil {
+		return fmt.Errorf("failed to read nonce: %w", err)
+	}
+	ciphertext, err := io.ReadAll(file)
+	if err != nil {
+		return fmt.Errorf("failed to read cipher text: %w", err)
+	}
+	plaintext, err := gcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt: %w", err)
+	}
+	var passwords map[string]Password
+	err = json.Unmarshal(plaintext, &passwords)
+	if err != nil {
+		return fmt.Errorf("failed to unmarshal JSON: %w", err)
+	}
+	pm.passwords = passwords
+	return nil
+}
