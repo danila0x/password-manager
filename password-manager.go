@@ -8,6 +8,14 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
+)
+
+const (
+	CapitalCase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+	Lowercase   = "abcdefghijklmnopqrstuvwxyz"
+	Digits      = "0123456789"
+	Special     = "!@#$%^&*"
 )
 
 type PasswordManager struct {
@@ -78,11 +86,7 @@ func (pm *PasswordManager) GeneratePassword(length int) (string, error) {
 	if length < 8 {
 		return "", fmt.Errorf("Error for short password: password is too weak")
 	}
-	capitalCase := "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-	lowercase := "abcdefghijklmnopqrstuvwxyz"
-	digits := "0123456789"
-	special := "!@#$%^&*"
-	allCharacters := capitalCase + lowercase + digits + special
+	allCharacters := CapitalCase + Lowercase + Digits + Special
 	key := make([]byte, length)
 	n, err := rand.Read(key)
 	if err != nil || n != length {
@@ -178,4 +182,33 @@ func (pm *PasswordManager) LoadFromFile() error {
 	}
 	pm.passwords = passwords
 	return nil
+}
+
+func (pm *PasswordManager) CheckPasswordManager(password string) error {
+	if len(password) < 8 {
+		return fmt.Errorf("password is too weak")
+	}
+	hasUpper := false
+	hasLower := false
+	hasDigit := false
+	hasSpecial := false
+	for _, r := range password {
+		if strings.ContainsRune(CapitalCase, r) {
+			hasUpper = true
+		}
+		if strings.ContainsRune(Lowercase, r) {
+			hasLower = true
+		}
+		if strings.ContainsRune(Digits, r) {
+			hasDigit = true
+		}
+		if strings.ContainsRune(Special, r) {
+			hasSpecial = true
+		}
+	}
+	if hasUpper && hasLower && hasDigit && hasSpecial {
+		return nil
+	} else {
+		return fmt.Errorf("password is too weak")
+	}
 }
