@@ -184,7 +184,7 @@ func (pm *PasswordManager) LoadFromFile() error {
 	return nil
 }
 
-func (pm *PasswordManager) CheckPasswordManager(password string) error {
+func (pm *PasswordManager) CheckPasswordStrength(password string) error {
 	if len(password) < 8 {
 		return fmt.Errorf("password is too weak")
 	}
