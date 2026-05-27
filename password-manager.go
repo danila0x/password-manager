@@ -212,3 +212,13 @@ func (pm *PasswordManager) CheckPasswordStrength(password string) error {
 		return fmt.Errorf("password is too weak")
 	}
 }
+
+func (pm *PasswordManager) GetPasswordsByCategory(category string) []Password {
+	var res []Password
+	for _, password := range pm.passwords {
+		if strings.EqualFold(password.Category, category) {
+			res = append(res, password)
+		}
+	}
+	return res
+}
