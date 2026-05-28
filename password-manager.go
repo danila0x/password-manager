@@ -9,6 +9,7 @@ import (
 	"io"
 	"os"
 	"strings"
+	"time"
 )
 
 const (
@@ -235,4 +236,27 @@ func (pm *PasswordManager) FindDuplicatePasswords() map[string][]string {
 		}
 	}
 	return res
+}
+
+func (pm *PasswordManager) UpdatePassword(name, newValue string) error {
+	if !pm.isInitialized {
+		return fmt.Errorf("manager is not initialized")
+	}
+	pass, ok := pm.passwords[name]
+	if !ok {
+		return fmt.Errorf("password not found")
+	}
+	err := pm.CheckPasswordStrength(newValue)
+	if err != nil {
+		return fmt.Errorf("update password error: %w", err)
+	}
+	newPass := Password{
+		Name:         name,
+		Value:        newValue,
+		Category:     pass.Category,
+		CreatedAt:    pass.CreatedAt,
+		LastModified: time.Now(),
+	}
+	pm.passwords[name] = newPass
+	return nil
 }
