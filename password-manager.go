@@ -260,3 +260,15 @@ func (pm *PasswordManager) UpdatePassword(name, newValue string) error {
 	pm.passwords[name] = newPass
 	return nil
 }
+
+func (pm *PasswordManager) DeletePassword(name string) error {
+	if !pm.isInitialized {
+		return fmt.Errorf("manager is not initialized")
+	}
+	_, ok := pm.passwords[name]
+	if !ok {
+		return fmt.Errorf("Deleting a nonexistent password: password not found")
+	}
+	delete(pm.passwords, name)
+	return nil
+}
