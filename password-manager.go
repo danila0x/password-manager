@@ -284,3 +284,35 @@ func (pm *PasswordManager) ListCategories() []string {
 	}
 	return result
 }
+
+func (pm *PasswordManager) GetPasswordStats() map[string]any {
+	resMap := make(map[string]any)
+	lengthPasswords := len(pm.passwords)
+	resMap["total"] = lengthPasswords
+	categoryStats := make(map[string]int)
+	for _, cat := range pm.ListCategories() {
+		categoryStats[cat] = len(pm.GetPasswordsByCategory(cat))
+	}
+	resMap["categories"] = categoryStats
+	var minDatePass time.Time
+	var maxDatePass time.Time
+	first := true
+	for _, pass := range pm.passwords {
+		if first {
+			minDatePass = pass.CreatedAt
+			maxDatePass = pass.CreatedAt
+			first = false
+		}
+		if first == false {
+			if pass.CreatedAt.Before(minDatePass) {
+				minDatePass = pass.CreatedAt
+			}
+			if pass.CreatedAt.After(maxDatePass) {
+				maxDatePass = pass.CreatedAt
+			}
+		}
+	}
+	resMap["oldest"] = minDatePass
+	resMap["newest"] = maxDatePass
+	return resMap
+}
