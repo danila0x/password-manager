@@ -360,7 +360,7 @@ func ReadUserInput(prompt string) string {
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
 	if err != nil {
-		fmt.Println("Error reading input: %w", err)
+		fmt.Println("Error reading input:", err)
 		return ""
 	}
 	input = strings.TrimSpace(input)
