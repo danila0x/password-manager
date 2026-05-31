@@ -11,6 +11,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"golang.org/x/term"
 )
 
 const (
@@ -351,4 +353,25 @@ func waitForEnter() {
 	}
 	input = strings.TrimSpace(input)
 	fmt.Printf("You entered: %q\n", input)
+}
+
+func ReadUserInput(prompt string) string {
+	fmt.Print(prompt)
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading input: %w", err)
+		return ""
+	}
+	input = strings.TrimSpace(input)
+	return input
+}
+
+func ReadPassword() (string, error) {
+	res, err := term.ReadPassword(int(os.Stdin.Fd()))
+	fmt.Println()
+	if err != nil {
+		return "", fmt.Errorf("Error reading password: %w", err)
+	}
+	return string(res), nil
 }
