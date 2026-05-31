@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"crypto/aes"
 	"crypto/cipher"
 	"crypto/rand"
@@ -17,6 +18,10 @@ const (
 	Lowercase   = "abcdefghijklmnopqrstuvwxyz"
 	Digits      = "0123456789"
 	Special     = "!@#$%^&*"
+	colorRed    = "\033[31m"
+	colorGreen  = "\033[32m"
+	colorYellow = "\033[33m"
+	colorReset  = "\033[0m"
 )
 
 type PasswordManager struct {
@@ -315,4 +320,34 @@ func (pm *PasswordManager) GetPasswordStats() map[string]any {
 	resMap["oldest"] = minDatePass
 	resMap["newest"] = maxDatePass
 	return resMap
+}
+
+func clearScreen() {
+	fmt.Print(colorReset)
+}
+
+func showSuccess(message string) {
+	successMessage := fmt.Sprintf("\x1b[1;32mSucces: %s\x1b[0m", message)
+	fmt.Println(successMessage)
+}
+
+func showError(message string) {
+	errorMessage := fmt.Sprintf("\033[31mError: %s\033[31m", message)
+	fmt.Println(errorMessage)
+}
+
+func showInfo(message string) {
+	infoMessage := fmt.Sprintf("%sInfo:%s%s", colorYellow, message, colorYellow)
+	fmt.Println(infoMessage)
+}
+
+func waitForEnter() {
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+		return
+	}
+	input = strings.TrimSpace(input)
+	fmt.Printf("You entered: %q\n", input)
 }
