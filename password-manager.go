@@ -323,21 +323,22 @@ func (pm *PasswordManager) GetPasswordStats() map[string]any {
 }
 
 func clearScreen() {
-	fmt.Print(colorReset)
+	fmt.Print("\033[2J") // очищает экран
+	fmt.Print("\033[H")  // перемещает курсор в начало
 }
 
 func showSuccess(message string) {
-	successMessage := fmt.Sprintf("\x1b[1;32mSucces: %s\x1b[0m", message)
+	successMessage := fmt.Sprintf("%sSucces: %s%s", colorGreen, message, colorReset)
 	fmt.Println(successMessage)
 }
 
 func showError(message string) {
-	errorMessage := fmt.Sprintf("\033[31mError: %s\033[31m", message)
+	errorMessage := fmt.Sprintf("%sError: %s%s", colorRed, message, colorReset)
 	fmt.Println(errorMessage)
 }
 
 func showInfo(message string) {
-	infoMessage := fmt.Sprintf("%sInfo:%s%s", colorYellow, message, colorYellow)
+	infoMessage := fmt.Sprintf("%sInfo:%s%s", colorYellow, message, colorReset)
 	fmt.Println(infoMessage)
 }
 
