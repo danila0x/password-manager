@@ -367,7 +367,7 @@ func ReadUserInput(prompt string) string {
 	return input
 }
 
-func ReadPassword() (string, error) {
+func readPassword() (string, error) {
 	res, err := term.ReadPassword(int(os.Stdin.Fd()))
 	fmt.Println()
 	if err != nil {
