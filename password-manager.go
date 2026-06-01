@@ -410,6 +410,6 @@ func ShowPasswordDetails(password Password) {
 	fmt.Printf("Service: %s\n", password.Name)
 	fmt.Printf("Category: %s\n", password.Category)
 	fmt.Printf("Password: %s\n", password.Value)
-	fmt.Printf("Created: %s\n", password.CreatedAt)
-	fmt.Printf("Last Modified: %s\n", password.LastModified)
+	fmt.Printf("Created: %v\n", password.CreatedAt)
+	fmt.Printf("Last Modified: %v\n", password.LastModified)
 }
