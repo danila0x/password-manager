@@ -375,3 +375,41 @@ func readPassword() (string, error) {
 	}
 	return string(res), nil
 }
+
+func ShowMainMenu() {
+	clearScreen()
+	fmt.Println("==========================================")
+	fmt.Println("\tPassword Manager\t")
+	fmt.Println("==========================================")
+	fmt.Println("1. Generate new password")
+	fmt.Println("2. Add new password")
+	fmt.Println("3. Get password")
+	fmt.Println("4. List all passwords")
+	fmt.Println("5. Update password")
+	fmt.Println("6.Delete password")
+	fmt.Println("7. List categories")
+	fmt.Println("8. Show password statistics")
+	fmt.Println("9. Find duplicate passwords")
+	fmt.Println("0. Exit")
+	fmt.Println("==========================================")
+}
+
+func PrintPasswordList(passwords []Password) {
+	fmt.Println("=== Password list ===")
+	fmt.Printf("%-20s %-15s %-15s %-15s\n", "Name", "Category", "Created", "Last Modified")
+	fmt.Println(strings.Repeat("-", 70))
+	for _, pass := range passwords {
+		createdStr := pass.CreatedAt.Format("2006-01-02")
+		modifiedStr := pass.LastModified.Format("2006-01-02")
+		fmt.Printf("%-20s %-15s %-15s %-15s\n", pass.Name, pass.Category, createdStr, modifiedStr)
+	}
+}
+
+func ShowPasswordDetails(password Password) {
+	fmt.Println("=== Password details ===")
+	fmt.Printf("Service: %s\n", password.Name)
+	fmt.Printf("Category: %s\n", password.Category)
+	fmt.Printf("Password: %s\n", password.Value)
+	fmt.Printf("Created: %s\n", password.CreatedAt)
+	fmt.Printf("Last Modified: %s\n", password.LastModified)
+}
