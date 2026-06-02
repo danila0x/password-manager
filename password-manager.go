@@ -432,7 +432,6 @@ func HandlePasswordGeneration(pm *PasswordManager) error {
 	if err != nil {
 		return fmt.Errorf("Error wher GeneratePassword: %w", err)
 	}
-	// fmt.Println("✓ Success: Password generated successfully")
 	showSuccess("Password generated successfully")
 	fmt.Printf("Generated password: %s\n", pass)
 	return nil
