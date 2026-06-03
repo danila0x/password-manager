@@ -416,6 +416,8 @@ func ShowPasswordDetails(password Password) {
 }
 
 func HandlePasswordGeneration(pm *PasswordManager) error {
+	clearScreen()
+	fmt.Println("=== Password Generation ===")
 	fmt.Print("Enter password length (min 8): ")
 	reader := bufio.NewReader(os.Stdin)
 	input, err := reader.ReadString('\n')
@@ -425,7 +427,7 @@ func HandlePasswordGeneration(pm *PasswordManager) error {
 	input = strings.TrimSpace(input)
 	passLength, err := strconv.Atoi(input)
 	if err != nil {
-		fmt.Println("Conversion error:", err)
+		showError("Conversion error")
 		return err
 	}
 	pass, err := pm.GeneratePassword(passLength)
@@ -434,10 +436,12 @@ func HandlePasswordGeneration(pm *PasswordManager) error {
 	}
 	showSuccess("Password generated successfully")
 	fmt.Printf("Generated password: %s\n", pass)
+	waitForEnter()
 	return nil
 }
 
 func HandlePasswordAdd(pm *PasswordManager) error {
+	clearScreen()
 	fmt.Println("=== Add New Password ===")
 	fmt.Print("Enter service name: ")
 	reader := bufio.NewReader(os.Stdin)
@@ -485,10 +489,12 @@ func HandlePasswordAdd(pm *PasswordManager) error {
 		showSuccess("Password generated successfully")
 		pm.SavePassword(serviceName, passInput, categoryName)
 	}
+	waitForEnter()
 	return nil
 }
 
 func HandlePasswordSearch(pm *PasswordManager) error {
+	clearScreen()
 	fmt.Println("=== Search Password ===")
 	fmt.Print("Enter service name: ")
 	reader := bufio.NewReader(os.Stdin)
@@ -501,16 +507,18 @@ func HandlePasswordSearch(pm *PasswordManager) error {
 	pass, err := pm.GetPassword(serviceName)
 	if err != nil {
 		if err.Error() == "password not found" {
-			fmt.Println("Password not found")
+			showError("Password not found")
 			return nil
 		}
 		return fmt.Errorf("failed to get password: %w", err)
 	}
 	ShowPasswordDetails(pass)
+	waitForEnter()
 	return nil
 }
 
 func HandlePasswordUpdate(pm *PasswordManager) error {
+	clearScreen()
 	fmt.Println("=== Update Password ===")
 	fmt.Print("Enter service name: ")
 	reader := bufio.NewReader(os.Stdin)
@@ -531,12 +539,13 @@ func HandlePasswordUpdate(pm *PasswordManager) error {
 	err = pm.UpdatePassword(serviceName, inputPass)
 	if err != nil {
 		if err.Error() == "password not found" {
-			fmt.Println("Password not found")
+			showError("Password not found")
 			return nil
 		}
 		return fmt.Errorf("failed to update password: %w", err)
 	}
 	newPass := fmt.Sprintf("New password: %s successfully updated", inputPass)
 	showSuccess(newPass)
+	waitForEnter()
 	return nil
 }
