@@ -515,6 +515,7 @@ func HandlePasswordSearch(pm *PasswordManager) error {
 		}
 		return fmt.Errorf("failed to get password: %w", err)
 	}
+	showSuccess("Password found")
 	ShowPasswordDetails(pass)
 	waitForEnter()
 	return nil
