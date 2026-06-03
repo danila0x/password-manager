@@ -537,6 +537,7 @@ func HandlePasswordUpdate(pm *PasswordManager) error {
 	}
 	err = pm.CheckPasswordStrength(inputPass)
 	if err != nil {
+		showError("password is too weak")
 		return err
 	}
 	err = pm.UpdatePassword(serviceName, inputPass)
