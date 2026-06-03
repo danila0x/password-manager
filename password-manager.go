@@ -462,7 +462,8 @@ func HandlePasswordAdd(pm *PasswordManager) error {
 		length := 8
 		pass, err := pm.GeneratePassword(length)
 		if err != nil {
-			return fmt.Errorf("Error when GeneratePassword: %w", err)
+			showError("Error when GeneratePassword")
+			return nil
 		}
 		generatedPassword := fmt.Sprintf("Generated password: %s", pass)
 		showInfo(generatedPassword)
@@ -478,7 +479,8 @@ func HandlePasswordAdd(pm *PasswordManager) error {
 	} else {
 		err := pm.CheckPasswordStrength(passInput)
 		if err != nil {
-			return fmt.Errorf("Error when CheckPasswordStrength: %w", err)
+			showError("Error when CheckPasswordStrength")
+			return nil
 		}
 		fmt.Print("Enter category: ")
 		readerCategory := bufio.NewReader(os.Stdin)
