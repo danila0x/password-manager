@@ -432,7 +432,8 @@ func HandlePasswordGeneration(pm *PasswordManager) error {
 	}
 	pass, err := pm.GeneratePassword(passLength)
 	if err != nil {
-		return fmt.Errorf("Error wher GeneratePassword: %w", err)
+		showError("Error when GeneratePassword")
+		return err
 	}
 	showSuccess("Password generated successfully")
 	fmt.Printf("Generated password: %s\n", pass)
