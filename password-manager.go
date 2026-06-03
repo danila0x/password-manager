@@ -428,12 +428,12 @@ func HandlePasswordGeneration(pm *PasswordManager) error {
 	passLength, err := strconv.Atoi(input)
 	if err != nil {
 		showError("Conversion error")
-		return err
+		return nil
 	}
 	pass, err := pm.GeneratePassword(passLength)
 	if err != nil {
 		showError("Error when GeneratePassword")
-		return err
+		return nil
 	}
 	showSuccess("Password generated successfully")
 	fmt.Printf("Generated password: %s\n", pass)
@@ -538,7 +538,7 @@ func HandlePasswordUpdate(pm *PasswordManager) error {
 	err = pm.CheckPasswordStrength(inputPass)
 	if err != nil {
 		showError("password is too weak")
-		return err
+		return nil
 	}
 	err = pm.UpdatePassword(serviceName, inputPass)
 	if err != nil {
@@ -546,7 +546,9 @@ func HandlePasswordUpdate(pm *PasswordManager) error {
 			showError("Password not found")
 			return nil
 		}
-		return fmt.Errorf("failed to update password: %w", err)
+		showError("failed to update password")
+		// return fmt.Errorf("failed to update password: %w", err)
+		return nil
 	}
 	newPass := fmt.Sprintf("New password: %s successfully updated", inputPass)
 	showSuccess(newPass)
