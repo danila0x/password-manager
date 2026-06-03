@@ -510,4 +510,33 @@ func HandlePasswordSearch(pm *PasswordManager) error {
 	return nil
 }
 
-func HandlePasswordUpdate(pm *PasswordManager) error
+func HandlePasswordUpdate(pm *PasswordManager) error {
+	fmt.Println("=== Update Password ===")
+	fmt.Print("Enter service name: ")
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		return fmt.Errorf("Error reading input: %w", err)
+	}
+	serviceName := strings.TrimSpace(input)
+	fmt.Print("Enter new password: ")
+	inputPass, err := reader.ReadString('\n')
+	if err != nil {
+		return fmt.Errorf("Error reading input: %w", err)
+	}
+	err = pm.CheckPasswordStrength(inputPass)
+	if err != nil {
+		return err
+	}
+	err = pm.UpdatePassword(serviceName, inputPass)
+	if err != nil {
+		if err.Error() == "password not found" {
+			fmt.Println("Password not found")
+			return nil
+		}
+		return fmt.Errorf("failed to update password: %w", err)
+	}
+	newPass := fmt.Sprintf("New password: %s successfully updated", inputPass)
+	showSuccess(newPass)
+	return nil
+}
