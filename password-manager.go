@@ -331,7 +331,7 @@ func clearScreen() {
 }
 
 func showSuccess(message string) {
-	successMessage := fmt.Sprintf("%sSucces: %s%s", colorGreen, message, colorReset)
+	successMessage := fmt.Sprintf("%sSuccess: %s%s", colorGreen, message, colorReset)
 	fmt.Println(successMessage)
 }
 
@@ -548,11 +548,23 @@ func HandlePasswordUpdate(pm *PasswordManager) error {
 			return nil
 		}
 		showError("failed to update password")
-		// return fmt.Errorf("failed to update password: %w", err)
 		return nil
 	}
 	newPass := fmt.Sprintf("New password: %s successfully updated", inputPass)
 	showSuccess(newPass)
 	waitForEnter()
+	return nil
+}
+
+func HandleExitAndSave(pm *PasswordManager) error {
+	clearScreen()
+	fmt.Println("=== Saving and Exiting ===")
+	fmt.Println("Saving changes...")
+	err := pm.SaveToFile()
+	if err != nil {
+		return fmt.Errorf("Error: error saving data: %w", err)
+	}
+	showSuccess("Changes saved successfully!")
+	showSuccess("Goodbye!")
 	return nil
 }
