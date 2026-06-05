@@ -1,7 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"errors"
 	"fmt"
+	"log"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -25,14 +30,76 @@ func NewPassword(name, value, category string) Password {
 
 func main() {
 	pm := NewPasswordManager("password.dat")
-	fmt.Println(pm)
-	err := pm.SetMasterPassword("asass")
-	if err != nil {
-		fmt.Printf("Weak master password: %v", err)
-	} else {
-		fmt.Printf("Strong master password:: %v\n", pm.masterKey)
-		fmt.Printf("Manager initialized: %v\n", pm.isInitialized)
-		fmt.Printf("Master key length: %v\n", len(pm.masterKey))
 
+	fmt.Println("=== Password Manager Initialization ===")
+	fmt.Print("Enter master password: ")
+	password, err := readPassword()
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = pm.SetMasterPassword(password)
+	if err != nil {
+		log.Fatal(err)
+	}
+	showSuccess("Password manager initialized successfully")
+	waitForEnter()
+
+	err = pm.LoadFromFile()
+	if err != nil {
+		if errors.Is(err, os.ErrNotExist) {
+			fmt.Println("No existing data file found. Starting fresh.")
+		} else {
+			fmt.Printf("Warning: failed to load data: %v\n", err)
+		}
+	}
+
+	for {
+		ShowMainMenu()
+		var choice int
+		fmt.Print("Enter your choice: ")
+		fmt.Scanln(&choice)
+
+		switch choice {
+		case 1:
+			HandlePasswordGeneration(pm)
+		case 2:
+			HandlePasswordAdd(pm)
+		case 3:
+			HandlePasswordSearch(pm)
+		case 4:
+			pm.ListPasswords()
+		case 5:
+			HandlePasswordUpdate(pm)
+		case 6:
+			clearScreen()
+			fmt.Println("=== Delete Password ===")
+			fmt.Print("Enter service name: ")
+			reader := bufio.NewReader(os.Stdin)
+			input, err := reader.ReadString('\n')
+			if err != nil {
+				fmt.Println("Error reading input:", err)
+				break
+			}
+			serviceName := strings.TrimSpace(input)
+
+			err = pm.DeletePassword(serviceName)
+			if err != nil {
+				showError(err.Error())
+			} else {
+				showSuccess("Password deleted successfully")
+			}
+			waitForEnter()
+		case 7:
+			pm.ListCategories()
+		case 9:
+			pm.FindDuplicatePasswords()
+		case 0:
+			HandleExitAndSave(pm)
+			return
+		default:
+			fmt.Println("Invalid choice. Please try again.")
+		}
+
+		fmt.Println()
 	}
 }
