@@ -1,12 +1,10 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
 	"log"
 	"os"
-	"strings"
 	"time"
 )
 
@@ -71,26 +69,11 @@ func main() {
 		case 5:
 			HandlePasswordUpdate(pm)
 		case 6:
-			clearScreen()
-			fmt.Println("=== Delete Password ===")
-			fmt.Print("Enter service name: ")
-			reader := bufio.NewReader(os.Stdin)
-			input, err := reader.ReadString('\n')
-			if err != nil {
-				fmt.Println("Error reading input:", err)
-				break
-			}
-			serviceName := strings.TrimSpace(input)
-
-			err = pm.DeletePassword(serviceName)
-			if err != nil {
-				showError(err.Error())
-			} else {
-				showSuccess("Password deleted successfully")
-			}
-			waitForEnter()
+			HandleDeletePassword(pm)
 		case 7:
 			pm.ListCategories()
+		case 8:
+			HandleShowStats(pm)
 		case 9:
 			pm.FindDuplicatePasswords()
 		case 0:
@@ -99,7 +82,6 @@ func main() {
 		default:
 			fmt.Println("Invalid choice. Please try again.")
 		}
-
 		fmt.Println()
 	}
 }

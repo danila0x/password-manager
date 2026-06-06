@@ -568,3 +568,48 @@ func HandleExitAndSave(pm *PasswordManager) error {
 	showSuccess("Goodbye!")
 	return nil
 }
+
+func HandleDeletePassword(pm *PasswordManager) error {
+	clearScreen()
+	fmt.Println("=== Delete Password ===")
+	fmt.Print("Enter service name: ")
+	reader := bufio.NewReader(os.Stdin)
+	input, err := reader.ReadString('\n')
+	if err != nil {
+		fmt.Println("Error reading input:", err)
+
+	}
+	serviceName := strings.TrimSpace(input)
+
+	err = pm.DeletePassword(serviceName)
+	if err != nil {
+		showError(err.Error())
+		waitForEnter()
+		return nil
+	}
+	showSuccess("Password deleted successfully")
+	waitForEnter()
+	return nil
+}
+
+func HandleShowStats(pm *PasswordManager) error {
+	clearScreen()
+	fmt.Println("=== Password Statistics ===")
+	stats := pm.GetPasswordStats()
+	fmt.Printf("Total passwords: %v\n", stats["total"])
+	fmt.Println("Categories:")
+	if categories, ok := stats["categories"].(map[string]int); ok {
+		for cat, count := range categories {
+			fmt.Printf(" %s: %d\n", cat, count)
+		}
+	}
+
+	if oldest, ok := stats["oldest"].(time.Time); ok && !oldest.IsZero() {
+		fmt.Printf("Oldest password: %s\n", oldest.Format("2006-01-02"))
+	}
+	if newest, ok := stats["newest"].(time.Time); ok && !newest.IsZero() {
+		fmt.Printf("Newest password: %s\n", newest.Format("2006-01-02"))
+	}
+	waitForEnter()
+	return nil
+}
