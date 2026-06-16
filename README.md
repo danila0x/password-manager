@@ -24,7 +24,3 @@ cd password-manager
 - Statistics – view total number of passwords, category distribution, and dates of the oldest and newest entries.
 
 - Duplicate detection – lists passwords that are used for more than one service.
-
-## License
-
-This project is for educational purposes. 
